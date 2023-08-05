@@ -1,3 +1,4 @@
+const userExtractor = require("../middleware/userExtractor");
 const Contact = require("../models/Contact");
 const User = require("../models/User");
 const contactsRouter = require("express").Router();
@@ -29,7 +30,7 @@ contactsRouter.get("/:id", async (req, res) => {
   }
 });
 
-contactsRouter.post("/", async (req, res) => {
+contactsRouter.post("/", userExtractor, async (req, res) => {
   try {
     if (!req.body.userId) return res.json({ error: "No userId provided." });
     if (!req.token)
@@ -52,7 +53,7 @@ contactsRouter.post("/", async (req, res) => {
   }
 });
 
-contactsRouter.delete("/:id", async (req, res) => {
+contactsRouter.delete("/:id", userExtractor, async (req, res) => {
   const id = req.params.id;
   try {
     if (!req.token)
@@ -72,7 +73,7 @@ contactsRouter.delete("/:id", async (req, res) => {
   }
 });
 
-contactsRouter.put("/:id", async (req, res) => {
+contactsRouter.put("/:id", userExtractor, async (req, res) => {
   const id = req.params.id;
   try {
     if (!req.token)

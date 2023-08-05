@@ -19,7 +19,7 @@ app.use(express.json());
 
 app.use(tokenExtractor);
 app.use("/api/login", loginRouter);
-app.use("/api/contacts", userExtractor, contactsRouter);
+app.use("/api/contacts", contactsRouter);
 app.use("/api/users", usersRouter);
 
 app.use(unknownEndpoint);
