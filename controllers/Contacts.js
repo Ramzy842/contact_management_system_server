@@ -67,7 +67,7 @@ contactsRouter.delete("/:id", userExtractor, async (req, res) => {
         .status(404)
         .json({ error: "Unauthorized to delete this contact." });
     await Contact.findByIdAndRemove(id);
-    return res.status(204).end();
+    return res.status(200).json({message: "Contact deleted successfully"});
   } catch {
     return res.status(500).json({ error: "Couldn't delete contact" });
   }
