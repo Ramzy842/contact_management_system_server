@@ -38,6 +38,8 @@ contactsRouter.post("/", userExtractor, async (req, res) => {
     if (!req.user) return res.status(401).json({ error: "Invalid token." });
     const user = await User.findById(req.user);
     if (!user) return res.status(404).json({ error: "User not found." });
+    if (!req.body.firstName || !req.body.lastName || !req.body.phone)
+      return res.status(401).json({ error: "Please fill all fields" });
     const newContact = new Contact({
       firstName: req.body.firstName,
       lastName: req.body.lastName,
