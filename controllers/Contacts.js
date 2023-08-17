@@ -3,6 +3,8 @@ const Contact = require("../models/Contact");
 const User = require("../models/User");
 const contactsRouter = require("express").Router();
 
+const phoneRegex = /^\d{7,15}$/;
+
 contactsRouter.get("/", async (req, res) => {
   try {
     const contacts = await Contact.find({}).populate("user", {
@@ -40,6 +42,14 @@ contactsRouter.post("/", userExtractor, async (req, res) => {
     if (!user) return res.status(404).json({ error: "User not found." });
     if (!req.body.firstName || !req.body.lastName || !req.body.phone)
       return res.status(401).json({ error: "Please fill all fields" });
+    if (!phoneRegex.test(req.body.phone)) {
+      return res
+        .status(400)
+        .json({
+          error:
+            "Invalid phone number format. Phone number should be between 7 and 15 digits.",
+        });
+    }
     const newContact = new Contact({
       firstName: req.body.firstName,
       lastName: req.body.lastName,
@@ -69,7 +79,7 @@ contactsRouter.delete("/:id", userExtractor, async (req, res) => {
         .status(404)
         .json({ error: "Unauthorized to delete this contact." });
     await Contact.findByIdAndRemove(id);
-    return res.status(200).json({message: "Contact deleted successfully"});
+    return res.status(200).json({ message: "Contact deleted successfully" });
   } catch {
     return res.status(500).json({ error: "Couldn't delete contact" });
   }
@@ -87,6 +97,18 @@ contactsRouter.put("/:id", userExtractor, async (req, res) => {
       return res
         .status(404)
         .json({ error: "Unauthorized to update this contact." });
+    if (!req.body.firstName || !req.body.lastName || !req.body.phone)
+      return res
+        .status(400)
+        .json({ error: "Please enter all required fields." });
+    if (!phoneRegex.test(req.body.phone)) {
+      return res
+        .status(400)
+        .json({
+          error:
+            "Invalid phone number format. Phone number should be between 7 and 15 digits.",
+        });
+    }
     const updatedContact = await Contact.findByIdAndUpdate(
       id,
       {
